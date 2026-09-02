@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ramp Agent Assessment Prep</title>
+<meta name="description" content="Practice quiz for ramp agent final assessment: safety, danger zones, GSE, loading, dangerous goods.">
+<meta name="theme-color" content="#E3E2DD">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --concrete:#E3E2DD;
+  --joint:#CFCEC7;
+  --paint:#FAFAF8;
+  --ink:#1B1F23;
+  --ink-soft:#585F66;
+  --yellow:#F2C200;
+  --yellow-deep:#D8AC00;
+  --red:#C0342A;
+  --green:#1D7A4C;
+  --steel:#37536E;
+  --radius:5px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--concrete);
+  color:var(--ink);
+  font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:17px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:56px;
+}
+.hazard{
+  height:12px;
+  background:repeating-linear-gradient(45deg,var(--yellow) 0 14px,var(--ink) 14px 28px);
+}
+.wrap{max-width:660px;margin:0 auto;padding:0 18px}
+h1,h2,h3,.cond{font-family:"Barlow Condensed","Barlow",system-ui,sans-serif;font-weight:700;letter-spacing:.01em}
+h1{font-size:2.6rem;line-height:1.02;margin:26px 0 6px}
+h2{font-size:1.75rem;line-height:1.1;margin:0 0 8px}
+p{margin:0 0 14px}
+.lede{color:var(--ink-soft);max-width:52ch}
+.screen{display:none}
+.screen.on{display:block}
+
+/* ---------- controls ---------- */
+.btn{
+  font-family:"Barlow Condensed","Barlow",sans-serif;
+  font-weight:700;font-size:1.25rem;letter-spacing:.02em;
+  background:var(--yellow);color:var(--ink);
+  border:2px solid var(--ink);border-radius:var(--radius);
+  padding:12px 22px;cursor:pointer;width:100%;
+  box-shadow:0 3px 0 var(--ink);
+}
+.btn:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink)}
+.btn.ghost{background:var(--paint);box-shadow:0 2px 0 var(--joint)}
+.btn.slim{font-size:1.05rem;padding:9px 16px;width:auto}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row .btn{width:auto;flex:1 1 auto}
+a{color:var(--steel)}
+:focus-visible{outline:3px solid var(--steel);outline-offset:2px}
+
+.panel{
+  background:var(--paint);border:2px solid var(--ink);border-radius:var(--radius);
+  padding:18px;margin:0 0 16px;
+}
+.panel h3{font-size:1.2rem;margin:0 0 10px}
+fieldset{border:0;padding:0;margin:0 0 18px}
+legend{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.2rem;padding:0;margin-bottom:9px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;width:100%;height:100%;left:0;top:0;margin:0;cursor:pointer}
+.chip span{
+  display:block;padding:7px 13px;background:var(--paint);
+  border:2px solid var(--joint);border-radius:99px;font-size:.95rem;font-weight:500;
+  color:var(--ink-soft);
+}
+.chip input:checked + span{background:var(--ink);border-color:var(--ink);color:var(--paint)}
+.chip input:focus-visible + span{outline:3px solid var(--steel);outline-offset:2px}
+.count{font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:.9rem}
+
+/* ---------- quiz ---------- */
+.topbar{
+  position:sticky;top:0;z-index:5;background:var(--concrete);
+  padding:12px 0 10px;border-bottom:1px solid var(--joint);
+}
+.meter{display:flex;gap:3px;height:9px;margin-bottom:9px}
+.seg{flex:1;background:var(--joint);border-radius:1px}
+.seg.done{background:var(--yellow)}
+.seg.miss{background:var(--red)}
+.seg.here{background:var(--ink)}
+.status{display:flex;justify-content:space-between;align-items:baseline;font-size:.88rem;color:var(--ink-soft)}
+.status b{font-family:"Barlow Condensed",sans-serif;font-size:1.1rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.tag{
+  display:inline-block;background:var(--steel);color:var(--paint);
+  padding:3px 9px;border-radius:3px;font-size:.78rem;font-weight:600;letter-spacing:.02em;
+}
+.q{font-size:1.42rem;line-height:1.28;font-weight:500;margin:18px 0 20px}
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.opt{
+  display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+  background:var(--paint);border:2px solid var(--joint);border-left-width:8px;
+  border-radius:var(--radius);padding:13px 14px;cursor:pointer;
+  font:inherit;color:inherit;
+}
+.opt:hover:not(:disabled){border-color:var(--ink-soft)}
+.opt .key{
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.05rem;
+  background:var(--joint);color:var(--ink);width:26px;height:26px;flex:0 0 26px;
+  display:grid;place-items:center;border-radius:3px;margin-top:1px;
+}
+.opt.right{border-color:var(--green);background:#EAF5EF}
+.opt.right .key{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:#FBEDEC}
+.opt.wrong .key{background:var(--red);color:#fff}
+.opt:disabled{cursor:default;opacity:1}
+.opt.dim{opacity:.5}
+.opt.picked{border-color:var(--ink);background:#F1EFE7}
+.opt.picked .key{background:var(--ink);color:var(--paint)}
+.hint{font-size:.93rem;color:var(--steel);font-weight:500;margin:-8px 0 12px}
+.qnote{font-size:.93rem;color:var(--ink-soft);border-left:4px solid var(--joint);padding-left:10px;margin:-8px 0 14px}
+#check{margin-bottom:14px}
+
+.verdict{border:2px solid var(--ink);border-radius:var(--radius);padding:14px;margin-bottom:16px;background:var(--paint)}
+.verdict.ok{border-color:var(--green)}
+.verdict.no{border-color:var(--red)}
+.verdict .head{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.2rem;margin-bottom:4px}
+.verdict.ok .head{color:var(--green)}
+.verdict.no .head{color:var(--red)}
+.verdict p{margin:0;font-size:.98rem;color:var(--ink-soft)}
+.hidden{display:none !important}
+
+/* ---------- results ---------- */
+.score{
+  background:var(--ink);color:var(--paint);border-radius:var(--radius);
+  padding:22px;margin:20px 0 18px;text-align:center;
+}
+.score .pct{font-family:"Barlow Condensed",sans-serif;font-size:4.6rem;line-height:.9;font-weight:700;color:var(--yellow);font-variant-numeric:tabular-nums}
+.score .of{font-size:1rem;color:#B9BFC5;margin-top:6px}
+.review{border-top:2px solid var(--joint);padding-top:14px;margin-top:10px}
+.miss{border-left:8px solid var(--red);background:var(--paint);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px}
+.miss .qq{font-weight:600;margin-bottom:7px}
+.miss .line{font-size:.95rem;color:var(--ink-soft);margin-bottom:3px}
+.miss .line b{color:var(--green);font-weight:600}
+.miss .line.bad b{color:var(--red)}
+
+/* ---------- import ---------- */
+textarea{
+  width:100%;min-height:190px;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  font-size:.92rem;padding:12px;border:2px solid var(--joint);border-radius:var(--radius);
+  background:var(--paint);color:var(--ink);resize:vertical;
+}
+textarea:focus{border-color:var(--ink)}
+.note{font-size:.9rem;color:var(--ink-soft)}
+code{background:var(--joint);padding:1px 5px;border-radius:3px;font-size:.88em}
+.msg{margin-top:12px;font-weight:500;font-size:.95rem}
+.msg.err{color:var(--red)}
+.msg.ok{color:var(--green)}
+.share{width:100%;font-family:ui-monospace,monospace;font-size:.8rem;padding:10px;border:2px solid var(--joint);border-radius:var(--radius);background:var(--paint);margin-top:10px}
+footer{margin:34px 0 10px;font-size:.85rem;color:var(--ink-soft);border-top:1px solid var(--joint);padding-top:14px}
+.kbd{font-size:.82rem;color:var(--ink-soft);margin-top:14px}
+@media (max-width:430px){
+  h1{font-size:2.1rem}
+  .q{font-size:1.25rem}
+  body{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<div class="hazard"></div>
+<div class="wrap">
+
+<!-- ============ START ============ -->
+<section id="start" class="screen on">
+  <h1>Ramp Agent<br>Assessment Prep</h1>
+  <p class="lede">21 questions collected from the assessment study materials, plus general drills on ramp safety, danger zones, ground equipment, loading, and dangerous goods. Pick your topics and go.</p>
+
+  <fieldset>
+    <legend>Topics</legend>
+    <div class="chips" id="cats"></div>
+    <p class="count" id="poolCount" style="margin-top:10px"></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Length</legend>
+    <div class="chips" id="lens">
+      <label class="chip"><input type="radio" name="len" value="10"><span>10 questions</span></label>
+      <label class="chip"><input type="radio" name="len" value="25" checked><span>25 questions</span></label>
+      <label class="chip"><input type="radio" name="len" value="0"><span>Everything</span></label>
+    </div>
+  </fieldset>
+
+  <button class="btn" id="go">Start quiz</button>
+
+  <div class="panel" style="margin-top:22px">
+    <h3>Use your own flashcards</h3>
+    <p class="note" style="margin-bottom:12px">Paste terms and definitions from your training materials to quiz yourself on the exact wording you'll be tested on.</p>
+    <button class="btn ghost slim" id="toImport">Add my flashcards</button>
+  </div>
+
+  <footer>
+    The United assessment questions are reproduced from study materials as written, typos included. The other topics reflect common industry ground-handling standards, where numbers and distances vary by station and aircraft type. For anything you'd act on, defer to your own manual, your trainer, and your station's local procedures.
+  </footer>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section id="quiz" class="screen">
+  <div class="topbar">
+    <div class="meter" id="meter"></div>
+    <div class="status">
+      <span class="tag" id="tag"></span>
+      <span><b id="qnum">1</b> of <b id="qtot">25</b> &nbsp;·&nbsp; <b id="scoreNow">0</b> right</span>
+    </div>
+  </div>
+
+  <p class="q" id="qtext"></p>
+  <p class="qnote hidden" id="qnote"></p>
+  <p class="hint hidden" id="multiHint">Pick every answer that applies, then check.</p>
+  <div class="opts" id="opts"></div>
+
+  <div class="verdict hidden" id="verdict" role="status" aria-live="polite">
+    <div class="head" id="vhead"></div>
+    <p id="vwhy"></p>
+  </div>
+
+  <button class="btn hidden" id="check">Check answer</button>
+  <button class="btn hidden" id="next">Next question</button>
+  <p class="kbd">Tap an answer, or press 1–4. Press Enter to continue.</p>
+  <div style="margin-top:20px"><button class="btn ghost slim" id="quit">End quiz</button></div>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section id="results" class="screen">
+  <h2 style="margin-top:26px">Results</h2>
+  <div class="score">
+    <div class="pct" id="pct">0%</div>
+    <div class="of" id="ofline">0 of 0 correct</div>
+  </div>
+  <div class="row">
+    <button class="btn" id="retryMissed">Retry missed only</button>
+    <button class="btn ghost" id="again">New quiz</button>
+  </div>
+  <div class="review" id="review"></div>
+</section>
+
+<!-- ============ IMPORT ============ -->
+<section id="import" class="screen">
+  <h2 style="margin-top:26px">Add your own flashcards</h2>
+  <p class="lede">One card per line, with the question and answer separated by a tab, a pipe <code>|</code>, or a hyphen with spaces around it. Wrong answers are built automatically from the other cards you paste.</p>
+  <p class="note">On Quizlet, open the set → three-dot menu → Export → choose "Tab" between term and definition and "New line" between rows → copy everything and paste it below. You need at least 4 cards.</p>
+  <textarea id="paste" placeholder="What does FOD stand for?&#9;Foreign Object Debris
+When may you approach a parked aircraft?&#9;After the beacon is off and chocks are in place"></textarea>
+  <div class="row" style="margin-top:12px">
+    <button class="btn" id="loadCards">Load these cards</button>
+    <button class="btn ghost" id="backHome">Back</button>
+  </div>
+  <div class="msg" id="importMsg"></div>
+
+  <div class="panel hidden" id="sharePanel" style="margin-top:20px">
+    <h3>Share this deck</h3>
+    <p class="note">This link carries your cards inside it. Text it to anyone and the quiz loads with your deck already in.</p>
+    <input class="share" id="shareUrl" readonly>
+    <div class="row" style="margin-top:10px"><button class="btn ghost slim" id="copyLink">Copy link</button></div>
+    <p class="msg" id="shareMsg"></p>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* =========================================================
+   QUESTION BANK
+   ========================================================= */
+const BANK = [
+/* =========================================================
+   UNITED ASSESSMENT — collected from study materials.
+   Wording preserved exactly as it appears on the cards,
+   including original typos.
+   ========================================================= */
+{c:"United assessment",q:"Carl is the marshaller for an arriving aircraft. As a part of the aircraft arrival team, one of his main responsibilities is to:",
+ o:["Ensure safe arrival of the aircraft to the gate area.","Oversee all communications with the flight deck.","Manage the Passenger Loading Bridge","Lead the team by assigning roles and responsibilities"],a:0,
+ why:"The marshaller's job is guiding the aircraft safely into the gate. Leading the team and running flight deck communications belong to other roles."},
+
+{c:"United assessment",q:"Shanti is scanning baggage for an outbound flight that is behind schedule. Since they are in a hurry, he feels it's okay to skip manual verification of the bag tag and label information for the loaded items. Do you agree with Shanti's decision to skip the manual verification to save time.",
+ o:["It's okay, but only when RSEs are behind schedule and need to load quickly to make up for time.","RSEs should follow local station guidelines and manually verify tags and label information only if they are using older model scanners.","RSEs should always verify the flight number and destination for baggage and cargo being loaded onto the departing aircraft.","It's okay since the scanners automate the process and mitigate the mishandling of bags and cargo."],a:2,
+ why:"Verification is always required. Being behind schedule and having a modern scanner are both distractors — neither removes the requirement."},
+
+{c:"United assessment",q:"The aircraft arrival team is ready to begin unloading a B737. What is required before we start unloading the plane?",
+ o:["Main landing gear chocks correctly placed","Safe to approach hand signal given","Nose gear chocks correctly placed","All options"],a:3,fixed:true,
+ why:"All three are required. Nose gear chocked, safe-to-approach signal given, and main gear chocked — then unloading begins."},
+
+{c:"United assessment",q:"Daryn communicates with hand signals to the push back driver, but he feels the driver us having difficulty understanding his hand signal communications. Which hand signal should he use if he needs to communicate verbally with the driver to ensure he understands all communications?",
+ o:["Negative","Slow Down","Emergency Stop","Safe to approach"],a:2,
+ why:"If communication breaks down, you stop the operation before talking it out. Emergency Stop halts everything so the conversation happens with nothing moving."},
+
+{c:"United assessment",q:"The aircraft arrival team is preparing for an arriving flight, but they have just been notified that the arrival has been delayed. When flight delays occur, RSEs should?",
+ o:["Review the weather reports to see if conditions many cause further flight delays.","Stay flexible to the needs of the service and communicate with the lead.","Take a 15 min break","Take the opportunity to chat with team members on the ramp."],a:1,
+ why:"Delays get reassigned by the lead. You stay available and communicate rather than deciding on your own what to do with the time."},
+
+{c:"United assessment",q:"John is loading bags onto the aircraft and finds several Expedite or Rush-tagged bags on the bag cart. What should he do with the Expedite or Rush bags?",
+ o:["Take the bags back to the baggage processing area because the tags were hand written.","Confirm the bags are routed for the current flight and destination and load immediately, returning the bags to the customers as soon as possible.","Set the bags on the ground and wait until the Leads clears the bags","Hold the bags until just before departure time to ensure he can safely load the Rush bags without delaying the departure of the aircraft."],a:1,
+ why:"Expedite and Rush bags are already late to their customer. Verify routing, then load right away — holding them only extends the delay."},
+
+{c:"United assessment",q:"Lita is preparing to operate a motorized GSE vehicle. What should she do first before operating the GSE.",
+ o:["Test the headset equipment before operating the GSE","check to see if the GSE is reserved for another gate","Verify the weather conditions are favorable for operating GSE","Preform a user check for the GSE"],a:3,
+ why:"The user check comes first on every piece of motorized GSE, every time, before it moves."},
+
+{c:"United assessment",q:"What needs to be accomplished before approaching the Operational Safety Zone with any Ground Service Equipment? Select all that apply.",
+ o:["Verify the aircraft has been secured with chocks","When entering the Operational Safety zone, all authorized Ground Service Equipment must preform a safety stop.","Ground Crew must never approach the aircraft if there is any questions of whether it is safe to do so.","Ensure aircraft engines are off and spooling down"],a:[0,1,2,3],multi:true,fixed:true,
+ why:"All four apply. Chocks verified, safety stop performed, engines off and spooling down, and never approach with any doubt about whether it's safe."},
+
+{c:"United assessment",q:"Brian is preparing to wingwalk a departing aircraft. Where should he position himself to accomplish the task safely?",
+ o:["As long as the pushback driver can see him, it does not matter where he stands","In general area of the wing ti, he must maintain safety clearance of at least 10 feet from the aircraft or tractor at all times and is visible to the pushback driver.","He should be as close to the push tractor as possible to expedite the disconnecting of the towbar.","During bad weather, it is acceptable to walk under the wing or tail of the aircraft while wingwalking to stay dry."],a:1,
+ why:"Near the wingtip, at least 10 feet of clearance from the aircraft or tractor, and always visible to the driver. Weather never justifies walking under the wing or tail."},
+
+{c:"United assessment",q:"When are lighted wands required for aircraft guidance? Select all that apply.",
+ o:["Lighted wands must be used from 30 min prior to sunset and 30 min after sunrise.","Lighted wands are not required if the ramp area has enough lighting for the flight deck to see the daytime or fluorescent wands.","Lighted wands must be used during low visibility, or any time inclement weather reduced visibility.","It is permissible to use daytime or fluorescent wands at night if the lighted wands need new batteries or need to be charged."],a:[0,2],multi:true,fixed:true,
+ why:"A and C. From 30 minutes before sunset to 30 minutes after sunrise, and any time visibility is reduced. Ramp lighting and dead batteries are not exceptions."},
+
+{c:"United assessment",q:"Mario is preparing to unload baggage and cargo from an aircraft that has just arrived. Once the aircraft is chocked and the \"Safe to approach\" hand signal is given, which item(s) require special handling and should be delivered to the top of the PLB as soon as possible?",
+ o:["Crew Baggage","Cargo","Strollers and wheelchairs","QUICKPAKS"],a:2,
+ why:"Customers cannot leave the aircraft without their mobility device or stroller, so those go up to the bridge first."},
+
+{c:"United assessment",q:"Sean is handling baggage for an outbound flight and notice a small bag with a \"Heavy\" tag attached. What action should he take when handling a bag with this tag type?",
+ o:["He should immediately ask for two or three team members to assist with handling the bag.","He should handle the bag as he normally would, especially since it is small and shouldn't be a problem to lift.","He should get a sense of the bag's weight first by pushing it and asking for assistance if necessary","He should only ask for assistance if other team members are nearby to assist with handling the bag."],a:2,
+ why:"Test the weight by pushing it before committing to the lift, then get help if it needs help. Small bags with heavy tags are exactly the ones that injure people."},
+
+{c:"United assessment",q:"What hand signal signal must be given before an aircraft can be approached, and the main landing gear can be safely chocked?",
+ o:["Cleat to move aircraft","Safe to approach","Chocks in","Stop"],a:1,
+ why:"Safe to approach is the signal that releases the team to move in and chock the mains."},
+
+{c:"United assessment",q:"What guidelines must be followed when handling Dangerous Goods Package? Select all that apply.",
+ o:["Ramp Service employees must inspect the package for damage or leaks when handling Dangerous Goods packages.","There are no guidelines for Dangerous Goods packages; they can be loaded like any other baggage and cargo.","Always observe all directional markings.","When loading Hazardous Materials (HazMat), it must be surrounded and secured by 15 bags, 450lbs of mail, or ballast to secure HazMat."],a:[0,2,3],multi:true,fixed:true,
+ why:"A, C and D. Inspect for damage and leaks, follow the directional arrows, and restrain HazMat with 15 bags, 450 lbs of mail, or ballast. Memorize that number."},
+
+{c:"United assessment",q:"Sheila is verifying flight number 653 and destination information (DEN) on the Automated Bag Tags (ABT) for the baggage she is placing onto the beltloader. From which direction should she read the information.",
+ o:["bottom to top","top to bottom","right to left","left to right"],a:0,
+ why:"Automated Bag Tags are read bottom to top."},
+
+{c:"United assessment",q:"Jamila is operating a motorized GSE vehicle. When should she preform a \"safety stop\" to check the breaks on the vehicle?",
+ o:["At the beginning of each of her shifts","When approaching the edge of the Operational Safety Zone.","At any time during her shift, as long as she conducts it at least once a day","When a lead is present to, observe the safety check"],a:1,
+ why:"The safety stop happens at the edge of the Operational Safety Zone, every approach — not once a shift and not once a day."},
+
+{c:"United assessment",q:"James is working in the bag room segregating bags. All three flights james is currently working are for narrowbody aircraft. Which statement is false?",
+ o:["Further segregate transfer bags","Use ULD containers since they have a hold more bags.","Setup different carts for terminating priority terminating, and transfer bags.","Keep in mind the questions - Where is it going? What flight is it? Is it transfer or terminating bag?"],a:1,
+ why:"Read the stem carefully — this asks which statement is FALSE. Narrowbody aircraft are bulk loaded, so ULD containers do not apply. The other three are correct bag room practice."},
+
+{c:"United assessment",q:"Brenton has been assigned to unload flight 1234, How can he determine the quantity and location of the baggage and cargo on flight 1234?",
+ o:["Wait until the aircraft arrives and locate the cargo compartments.","Contact a Customer Service Rep","Review a RAMPFT for flight 1234","Print a DALR and DASG for flight 1234"],a:3,
+ why:"The DALR and DASG give you the counts and the compartment locations before the aircraft arrives, so the team can plan the offload."},
+
+{c:"United assessment",q:"What steps is always required before disconnecting the PC air and Ground Power on all departing aircraft?",
+ o:["Always remove the PC Air and Ground Power 10 minutes prior to departure to avoid an aircraft delay.","Confirm with the flight deck the PC Air and Ground Power are no longer needed and may be safely removed from the aircraft.","Ensure the Ground Power \"Not in use\" light is illuminated before removing the PC Air and Ground Power.","Listen to ensure the APU is running before disconnecting the PC Air and Ground Power."],a:1,
+ why:"Only the flight deck can confirm they no longer need ground air and power. A light or the sound of the APU is not confirmation."},
+
+{c:"United assessment",q:"How many terminating bags were loaded on the flight?",
+ o:["86","136","57","66"],a:3,
+ note:"On the real test this question has a load report attached. Read the terminating line for the destination station.",
+ why:"66. The load report shows IAH BR 66 — the BR line for the destination station is the terminating bag count."},
+
+{c:"United assessment",q:"Janice is the marshaller for flight UA3762. When should Janice give the \"Safe to approach\" hand signal to the wingwalkers?",
+ o:["When both the nose and the main landing gear are chocked","When the nose wheel is properly chocked, engines are off and spooling down, and beacon light is off","After the jet bridge has been positioned next to the aircraft door.","When the RSEs are approaching the aircraft with GSE"],a:1,
+ why:"Nose wheel chocked, engines off and spooling down, beacon off — then the signal. The main gear chocks come after the signal, which is why option A is wrong."},
+
+/* ---- Ramp safety & PPE ---- */
+{c:"Ramp safety",q:"What does FOD stand for?",o:["Foreign Object Debris or Damage","Fuel Overflow Detection","Flight Operations Directive","Forward Object Deflector"],a:0,
+ why:"FOD is any loose object that can damage an aircraft or be ingested by an engine — bag tags, luggage wheels, rocks, tape, coffee lids. It also stands for the damage that object causes."},
+{c:"Ramp safety",q:"You find a loose piece of metal banding on the ramp. What do you do?",o:["Kick it toward the grass","Pick it up and put it in a FOD container","Leave it and report it later","Drive around it"],a:1,
+ why:"FOD is picked up immediately and placed in a designated FOD container. Kicking it aside just moves the hazard."},
+{c:"Ramp safety",q:"Which of the following is required personal protective equipment on the ramp?",o:["Hearing protection","A hard hat at all times","Face shield","Cut-resistant sleeves"],a:0,
+ why:"Hearing protection is required because ramp noise routinely exceeds safe exposure limits. A high-visibility vest and safety-toe footwear are also standard."},
+{c:"Ramp safety",q:"What is the purpose of maintaining three points of contact?",o:["To balance a load evenly in the bin","To prevent falls when climbing on or off equipment","To keep three crew members on every flight","To triple-check the bag count"],a:1,
+ why:"Two hands and a foot, or two feet and a hand, stay in contact with the equipment at all times when climbing up or down. Jumping off equipment is a leading cause of ramp injuries."},
+{c:"Ramp safety",q:"Using a cell phone while operating ground support equipment is:",o:["Allowed if hands-free","Allowed for work calls only","Prohibited","Allowed when the aircraft is not at the gate"],a:2,
+ why:"Any phone use while operating equipment is a distraction and is prohibited. Pull over, park, and secure the equipment first."},
+{c:"Ramp safety",q:"When walking on the ramp, the safest practice is to:",o:["Walk under the fuselage to save time","Walk around the aircraft, never under it or through the danger zones","Cut between parked equipment","Follow the fuel truck"],a:1,
+ why:"Walking under the fuselage puts you in blind spots, near jet blast and propellers, and inside areas where equipment operators cannot see you."},
+{c:"Ramp safety",q:"Who has the authority to stop an operation they believe is unsafe?",o:["Only the supervisor","Only the flight crew","Any employee","Only the lead agent"],a:2,
+ why:"Every employee has stop-work authority. If something looks unsafe, you stop it and escalate — no one is penalized for stopping an unsafe job."},
+{c:"Ramp safety",q:"Smoking or vaping on the ramp is:",o:["Allowed away from the aircraft","Prohibited","Allowed while the aircraft is not fueling","Allowed inside a vehicle"],a:1,
+ why:"Fuel vapor can travel well beyond the aircraft. Smoking and vaping are prohibited anywhere on the ramp, including inside vehicles."},
+
+/* ---- Danger zones & aircraft approach ---- */
+{c:"Danger zones",q:"A red rotating anti-collision beacon is illuminated on the aircraft. This means:",o:["Boarding is complete","Engines are running or about to start — stay clear","The aircraft needs power","Cargo doors are open"],a:1,
+ why:"The beacon signals that engines are running or are about to be started. Do not approach the aircraft or place equipment against it while it is on."},
+{c:"Danger zones",q:"Before you may approach an arriving aircraft, what must happen?",o:["The jet bridge must be extended","Engines are spooled down, the beacon is off, and chocks are in place","Passengers must be standing","The cargo door must be open"],a:1,
+ why:"Wait for the engines to spool down and the beacon to go off, then chocks go in. Only then does equipment move in."},
+{c:"Danger zones",q:"The hazard behind a running jet engine is called:",o:["Ingestion","Jet blast","Cavitation","Backdraft"],a:1,
+ why:"Jet blast is high-velocity hot exhaust that can knock down people and flip equipment. The hazardous distance grows dramatically as thrust increases, so treat it as far larger than you'd expect and check your aircraft-specific diagram."},
+{c:"Danger zones",q:"The area in front of a running jet engine is dangerous primarily because of:",o:["Ingestion — you can be pulled into the intake","Noise only","Heat radiating forward","Static electricity"],a:0,
+ why:"Engine intake suction can pull in a person or loose equipment. Intake and exhaust hazard areas differ by aircraft type and power setting — know the diagram for the aircraft you're working."},
+{c:"Danger zones",q:"What is the equipment restraint line (also called the safety line or ERL) for?",o:["Marking where bags are staged","Marking how far equipment may advance before the aircraft is safe to approach","Marking the fueling zone","Marking the pushback path"],a:1,
+ why:"Equipment stays behind the line until the aircraft is parked, engines are down, the beacon is off, and chocks are set."},
+{c:"Danger zones",q:"When are wheel chocks placed?",o:["While the aircraft is still rolling","After the aircraft is stopped and engines have spooled down","Before the aircraft arrives at the gate","Only overnight"],a:1,
+ why:"Never approach a moving aircraft. Chocks go in after it comes to a complete stop and the engines are spooled down."},
+{c:"Danger zones",q:"Chocks may be removed:",o:["Whenever the ramp is clear","Only when authorized as part of the departure and pushback procedure","When the last bag is loaded","When the jet bridge retracts"],a:1,
+ why:"Chocks stay in until the pushback crew is connected, brakes are set, and removal is authorized. Pulling them early leaves an unrestrained aircraft."},
+{c:"Danger zones",q:"A propeller that is not turning should be treated as:",o:["Safe to walk past","Live and capable of turning at any moment","Safe once the beacon is off","Safe if the pilot waves"],a:1,
+ why:"Props can rotate unexpectedly. Always treat them as live and never walk through the propeller arc."},
+
+/* ---- Ground support equipment ---- */
+{c:"Equipment",q:"What must be completed before operating a piece of ground support equipment?",o:["A fuel receipt","A pre-operation walk-around inspection","A weight and balance form","A radio check with the tower"],a:1,
+ why:"Check brakes, tires, lights, horn, fluid leaks, and safety devices. Equipment with a defect is tagged out of service, not driven."},
+{c:"Equipment",q:"A brake check performed at a designated point before approaching the aircraft confirms:",o:["That the equipment has fuel","That the brakes will stop the equipment before it reaches the aircraft","That the parking brake is released","That the load is secure"],a:1,
+ why:"Stopping short of the aircraft at a set point proves the brakes work before you commit to closing in on the airframe."},
+{c:"Equipment",q:"When approaching an aircraft with ground support equipment, you should:",o:["Approach at normal ramp speed","Approach slowly at a controlled walking pace, prepared to stop","Approach fast to save time, then brake hard","Approach at an angle at full speed"],a:1,
+ why:"Inside the safety zone, equipment moves at a slow, controlled pace so it can stop instantly. Most ground damage happens in the last few feet."},
+{c:"Equipment",q:"When backing equipment where your view is obstructed, you should:",o:["Use mirrors only","Use a guide person or wing walker","Honk and proceed","Back up quickly to minimize exposure"],a:1,
+ why:"A trained guide person watches the blind side. If you lose sight of your guide, stop immediately."},
+{c:"Equipment",q:"Before leaving any ground support equipment unattended, you must:",o:["Leave it running for the next agent","Set the parking brake, shut it down, and secure it in its designated area","Park it against the aircraft","Leave the keys in the ignition","Leave it in gear"],a:1,
+ why:"Unsecured equipment rolls, and wind moves it into aircraft. Park it, brake it, chock it if required, and stow it clear of movement areas."},
+{c:"Equipment",q:"Riding on a baggage belt loader belt is:",o:["Permitted when the belt is slow","Prohibited","Permitted for short distances","Permitted with a spotter"],a:1,
+ why:"Belts are for baggage, not people. Riding the belt causes falls and entanglement injuries."},
+{c:"Equipment",q:"What is the main hazard of towing too many baggage carts behind a tug?",o:["Excess fuel burn","Loss of control and whipping of the rear carts","Slower loading","Extra paperwork"],a:1,
+ why:"Long trains whip on turns, tip carts, and strike aircraft or people. Follow the cart limit and take turns wide and slow."},
+{c:"Equipment",q:"Seat belts in ground support equipment are:",o:["Optional on the ramp","Required whenever the equipment is in motion","Required only outside the safety zone","Required only in tugs"],a:1,
+ why:"Ramp vehicles roll and stop abruptly and many have open sides. If it's equipped with a belt, wear it."},
+{c:"Equipment",q:"A jet bridge positioned at an aircraft must have which system engaged?",o:["Auto-level","Cabin pressurization","Ground power lockout","Anti-skid"],a:0,
+ why:"Auto-level keeps the bridge tracking with the aircraft as it settles or rises during loading and fueling. Without it, the bridge can bind against the fuselage."},
+
+/* ---- Baggage & cargo ---- */
+{c:"Loading",q:"A checked bag weighing more than 70 lb (32 kg) should generally be handled how?",o:["Lifted by one agent quickly","With a two-person lift or mechanical assistance","Rolled into the bin","Loaded last by hand"],a:1,
+ why:"Very heavy bags are a two-person or mechanical-assist item. Check your carrier's exact weight thresholds and heavy-tag rules."},
+{c:"Loading",q:"The correct way to lift a heavy bag is to:",o:["Bend at the waist and twist to the belt","Bend your knees, keep your back straight, hold the load close, and pivot your feet","Lift with straight legs and a rounded back","Swing the bag using momentum"],a:1,
+ why:"Power comes from the legs. Twisting under load is what injures backs — move your feet instead of rotating your spine."},
+{c:"Loading",q:"Why does it matter which compartment a bag is loaded into?",o:["It only affects offload speed","It affects the aircraft's weight and balance","It affects fuel price","It is purely a customer service issue"],a:1,
+ why:"The load plan keeps the center of gravity within limits. Loading off-plan without telling anyone can put the aircraft outside its safe envelope."},
+{c:"Loading",q:"When stacking bags in a bulk bin, the general rule is:",o:["Heavy on the bottom, lighter and fragile on top","Fragile on the bottom to cushion the load","Alphabetical by destination","Heaviest on top for easy removal"],a:0,
+ why:"Heavy items go low and against the load-bearing structure; soft and fragile items go on top so they aren't crushed."},
+{c:"Loading",q:"Before closing a cargo door, you must confirm:",o:["Bag count only","That the load is restrained — nets, straps, or ULD latches secured","That the bin light is on","That the belt loader is running"],a:1,
+ why:"Unrestrained loads shift in flight, damaging aircraft structure and moving the center of gravity."},
+{c:"Loading",q:"What does ULD stand for?",o:["Unit Load Device","Universal Loading Dolly","Upper Level Deck","Undercarriage Lift Device"],a:0,
+ why:"A ULD is a container or pallet that holds a group of bags or cargo as one unit. Latches and locks must be engaged before departure."},
+{c:"Loading",q:"Throwing or dropping bags into a bin is:",o:["Acceptable when running late","Never acceptable — it damages bags, aircraft, and people","Acceptable for soft-sided bags","Acceptable if nobody is below"],a:1,
+ why:"Thrown bags break contents, damage bin liners and aircraft structure, and injure the agent working inside the bin."},
+{c:"Loading",q:"You notice the bag tag destination does not match the flight you're loading. You should:",o:["Load it anyway and sort it later","Pull the bag and notify the lead or load agent","Remove the tag","Put it in the last bin"],a:1,
+ why:"Loading a mismatched bag creates a mishandled bag and, in some cases, a security issue. Pull it and escalate."},
+{c:"Loading",q:"Compartment and bin maximum weight limits exist to:",o:["Speed up loading","Protect the aircraft structure and keep the load within certified limits","Standardize bag counts","Reduce fuel costs"],a:1,
+ why:"Floors and bin structures are certified to a maximum load. Exceeding the limit, or concentrating weight in one spot, can damage the structure."},
+
+/* ---- Dangerous goods ---- */
+{c:"Dangerous goods",q:"You find a package in the bin that is leaking an unknown liquid. Your first action is:",o:["Wipe it up with a rag","Do not touch it — move away, isolate the area, and notify your supervisor immediately","Open it to see what it is","Load it in a different compartment"],a:1,
+ why:"Do not touch, smell, or open it. Keep people away, secure the area, and let trained responders handle it."},
+{c:"Dangerous goods",q:"Spare lithium batteries and power banks must be carried:",o:["In checked baggage only","In carry-on baggage only","In the cargo hold in a metal box","Anywhere the passenger prefers"],a:1,
+ why:"Spare lithium cells must stay in the cabin where a fire can be seen and fought. They are prohibited in checked baggage."},
+{c:"Dangerous goods",q:"What is a NOTOC?",o:["A notice to the captain about dangerous goods on board","A no-contact loading order","A notice of overweight cargo","A night operations checklist"],a:0,
+ why:"The Notification to Captain tells the flight crew what dangerous goods are aboard and where they are loaded, so they can respond correctly to an in-flight problem."},
+{c:"Dangerous goods",q:"Dry ice is classified as which class of dangerous goods?",o:["Class 2 — gases","Class 3 — flammable liquids","Class 9 — miscellaneous","Class 5 — oxidizers"],a:2,
+ why:"Dry ice is Class 9. It sublimates into carbon dioxide gas, which displaces oxygen — a real hazard in an enclosed bin."},
+{c:"Dangerous goods",q:"\"Hidden dangerous goods\" means:",o:["Goods deliberately concealed by smugglers only","Items whose description doesn't reveal the hazard inside","Goods loaded in the aft bin","Goods without a bag tag"],a:1,
+ why:"Innocent-sounding shipments hide hazards: camping gear can contain fuel, toolboxes contain aerosols, electrical equipment contains batteries."},
+{c:"Dangerous goods",q:"A diamond-shaped label on a package indicates:",o:["Fragile contents","A dangerous goods hazard class","Priority handling","Live animals"],a:1,
+ why:"The diamond hazard label identifies the class of dangerous goods. Handling, segregation, and loading position depend on it."},
+{c:"Dangerous goods",q:"A passenger's checked bag is found to contain a camping stove with fuel residue. You should:",o:["Load it in the rear bin","Not load it and notify your supervisor","Remove the fuel and load the stove","Tape it shut and load it"],a:1,
+ why:"Undeclared dangerous goods do not get loaded. Set the bag aside and escalate to your supervisor."},
+
+/* ---- Pushback & marshalling ---- */
+{c:"Pushback",q:"What is the purpose of the nose gear steering bypass pin?",o:["To lock the brakes during pushback","To disable nose wheel steering so the tow does not damage the gear","To hold the towbar to the tug","To ground the aircraft electrically"],a:1,
+ why:"With steering bypassed, the nose gear can caster with the tow. The pin is removed after the tow and shown to the flight crew so they know steering is restored."},
+{c:"Pushback",q:"What is the function of a towbar shear pin?",o:["To lock the towbar head","To break under excessive force and protect the nose gear","To hold the bypass pin","To signal the flight deck"],a:1,
+ why:"The shear pin is a deliberate weak point. It fails before the nose gear does, which is why a sheared pin means stop and inspect, not improvise."},
+{c:"Pushback",q:"During pushback, communication with the flight deck is normally maintained by:",o:["Hand signals only","A headset or interphone connection","Radio to the tower","The gate agent"],a:1,
+ why:"The wing walker or pushback operator stays on the headset. If the headset fails, you revert to standard hand signals and stop if in doubt."},
+{c:"Pushback",q:"The emergency stop signal is given by:",o:["One arm raised straight up","Arms crossed repeatedly above the head","Waving one hand side to side at waist level","Both thumbs down"],a:1,
+ why:"Arms crossed and repeatedly waved above the head means stop now. Everyone on the ramp must recognize it, and anyone may give it."},
+{c:"Pushback",q:"Wing walkers during pushback are responsible for:",o:["Guiding passengers","Monitoring wingtip and tail clearance from obstacles","Counting bags","Operating the jet bridge"],a:1,
+ why:"They watch the clearance the tug driver cannot see and stop the pushback if anything comes close."},
+{c:"Pushback",q:"The towbar may be disconnected only after:",o:["The engines start","Aircraft brakes are set and the pushback crew confirms clearance","The wing walkers leave","The beacon comes on"],a:1,
+ why:"Disconnecting from an aircraft that is not braked leaves it uncontrolled. Confirm brakes set, then disconnect, then clear the area and give the all-clear signal."},
+
+/* ---- Special handling ---- */
+{c:"Special handling",q:"Live animals (AVI) in the hold should generally be:",o:["Loaded first and offloaded last","Loaded last and offloaded first","Stacked to save space","Left on the cart until boarding ends"],a:1,
+ why:"Minimizing time in the hold and on the ramp limits temperature exposure. Keep kennels upright, never stack them, and shield them from weather, jet blast, and exhaust."},
+{c:"Special handling",q:"Human remains (HUM) must be handled:",o:["Like any other cargo","With dignity and respect, and shielded from public view","Only by supervisors","Last, in the rear bin only"],a:1,
+ why:"Handle with care and dignity, keep the shipment out of public view, and follow the specific orientation and loading requirements."},
+{c:"Special handling",q:"A passenger's battery-powered mobility device requires special handling because:",o:["It is oversized","The battery type determines how it must be prepared and loaded","It is always cargo","It must be disassembled"],a:1,
+ why:"Spillable, non-spillable, and lithium batteries each have different requirements for disconnection, terminal protection, and stowage. Identify the battery type before loading."},
+{c:"Special handling",q:"A checked firearm must be:",o:["Left on the cart until the last minute","In a locked hard-sided case, declared, and never left unattended","Loaded in the overhead bin","Tagged as fragile on the outside"],a:1,
+ why:"Firearms travel in a locked hard case, are declared, and require continuous accountability. Never leave one unattended on the ramp or a cart."},
+{c:"Special handling",q:"On arrival, a gate-checked wheelchair should be:",o:["Sent to baggage claim","Returned promptly to the aircraft door or jet bridge","Held for the next flight","Left in the bin"],a:1,
+ why:"Mobility devices are among the first items off and go straight back to the customer at the door, unless they've requested otherwise."},
+
+/* ---- Weather, fueling, deice ---- */
+{c:"Weather & fueling",q:"When lightning is reported within your station's defined radius, ramp personnel should:",o:["Continue working under the wing","Suspend ramp operations and take shelter in a building or enclosed vehicle","Shelter under the jet bridge","Keep loading but work faster"],a:1,
+ why:"Suspend operations and get inside a substantial building or a fully enclosed metal-topped vehicle. Aircraft, jet bridges, and open equipment are not shelter. The alert radius and the all-clear timing are set by your station."},
+{c:"Weather & fueling",q:"Type I deicing fluid is typically:",o:["Green and thickened","Heated and orange, used to remove ice and snow","Applied cold as an anti-icer","Applied only to windows"],a:1,
+ why:"Type I is heated and dyed orange to remove contamination. Type IV is green, thickened, and applied to prevent new accumulation."},
+{c:"Weather & fueling",q:"What does holdover time refer to?",o:["Time the aircraft waits at the gate","The estimated time anti-icing fluid keeps preventing accumulation","Crew duty limits","How long chocks stay in place"],a:1,
+ why:"Holdover time is the estimated protection window after anti-icing fluid is applied, based on fluid type, temperature, and precipitation. Once it expires, the aircraft may need to be treated again."},
+{c:"Weather & fueling",q:"During fueling, ground equipment must:",o:["Be parked close to the fuel truck","Stay clear of the fueling zone and never block the fuel truck's escape route","Be shut off entirely on the ramp","Be positioned under the wing"],a:1,
+ why:"Keep the fueling zone around vents and fuel points clear, keep an exit path open for the truck, and know where the emergency fuel shutoff is."},
+{c:"Weather & fueling",q:"If you discover a fuel spill on the ramp, you should:",o:["Hose it down with water","Stop operations in the area, keep ignition sources away, and notify your supervisor immediately","Cover it with bags","Drive through it slowly"],a:1,
+ why:"A spill is a fire hazard. Stop work, keep vehicles and ignition sources out, evacuate the immediate area, and let trained responders handle the cleanup."},
+{c:"Weather & fueling",q:"In high winds, unused ground equipment should be:",o:["Left where it is","Parked, braked, chocked, and secured in its designated area","Parked against the aircraft as a windbreak","Left running"],a:1,
+ why:"Wind moves unsecured equipment into aircraft. Secure it, and close and latch cart curtains and bin doors."},
+
+/* ---- Servicing, reporting, emergencies ---- */
+{c:"Reporting",q:"You lightly bump the aircraft with a belt loader and see no visible damage. You must:",o:["Say nothing if there is no mark","Report it immediately before the aircraft departs","Note it at the end of your shift","Tell the next crew"],a:1,
+ why:"Any contact with an aircraft is reported immediately, no matter how minor it looks. Hidden structural damage can only be ruled out by a mechanic's inspection."},
+{c:"Reporting",q:"Potable water and lavatory servicing equipment must:",o:["Be interchangeable to save time","Never be interchanged, to prevent contamination","Be used at the same time","Share the same hoses"],a:1,
+ why:"Cross-contamination between lavatory and potable water service is a public health hazard. Carts, hoses, and connections are dedicated and never swapped."},
+{c:"Reporting",q:"An on-the-job injury, no matter how minor, should be:",o:["Handled personally","Reported to your supervisor as soon as possible","Reported only if you need time off","Mentioned at the next shift briefing"],a:1,
+ why:"Prompt reporting protects your medical coverage and lets the station fix whatever caused the injury before it hurts someone else."},
+{c:"Reporting",q:"If you are unsure about a procedure, the correct action is:",o:["Do what the agent next to you does","Guess and correct it later","Stop and ask your lead or supervisor","Skip that step"],a:2,
+ why:"Ramp work has no low-consequence guesses. Stopping to ask costs a minute; a wrong assumption can cost an aircraft or a person."},
+{c:"Reporting",q:"Ground power and air must be disconnected:",o:["After engine start","Before pushback, with lines and cables stowed clear","During pushback","Only if the APU fails"],a:1,
+ why:"Cables and hoses left connected are dragged and damaged during pushback. Disconnect, stow, and confirm the area is clear before the aircraft moves."},
+{c:"Reporting",q:"Standard radio communication on the ramp should be:",o:["Casual, to keep it friendly","Brief, clear, and using standard phraseology","As detailed as possible","Reserved for supervisors"],a:1,
+ why:"Clear, standard phrasing prevents misunderstandings in a noisy environment where a misheard instruction can move an aircraft the wrong way."}
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+let pool = BANK.slice();        // active source of questions
+let deck = [];                  // current quiz
+let idx = 0, score = 0, answered = false;
+let picked = new Set();         // current selections on a select-all question
+let results = [];               // {q, chosen, correct}
+let custom = null;              // imported deck, if any
+
+/* ---- URL-carried deck ---- */
+function decodeHash(){
+  const m = location.hash.match(/[#&]d=([^&]+)/);
+  if(!m) return null;
+  try{
+    const b = m[1].replace(/-/g,'+').replace(/_/g,'/');
+    const json = decodeURIComponent(escape(atob(b)));
+    const arr = JSON.parse(json);
+    if(Array.isArray(arr) && arr.length) return arr;
+  }catch(e){}
+  return null;
+}
+function encodeDeck(arr){
+  const json = JSON.stringify(arr);
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_');
+}
+
+/* ---- screens ---- */
+function show(id){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  window.scrollTo({top:0});
+}
+
+/* ---- topic chips ---- */
+function buildCats(){
+  const cats = [...new Set(pool.map(q=>q.c))];
+  $('#cats').innerHTML = cats.map(c=>
+    `<label class="chip"><input type="checkbox" class="cat" value="${esc(c)}" checked><span>${esc(c)}</span></label>`
+  ).join('');
+  $$('.cat').forEach(el=>el.addEventListener('change',updateCount));
+  updateCount();
+}
+function selectedCats(){ return $$('.cat').filter(c=>c.checked).map(c=>c.value); }
+function filtered(){
+  const cats = selectedCats();
+  return pool.filter(q=>cats.includes(q.c));
+}
+function updateCount(){
+  const n = filtered().length;
+  $('#poolCount').textContent = n + (n===1?' question available':' questions available');
+  $('#go').disabled = n < 1;
+}
+
+/* ---- helpers ---- */
+function esc(s){ return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* =========================================================
+   QUIZ FLOW
+   ========================================================= */
+function startQuiz(source){
+  let qs = source || shuffle(filtered());
+  const len = parseInt(($$('input[name=len]').find(r=>r.checked)||{value:25}).value,10);
+  if(!source && len > 0) qs = qs.slice(0,len);
+
+  // shuffle options per question, tracking the correct index/indices
+  deck = qs.map(q=>{
+    const correct = Array.isArray(q.a) ? q.a : [q.a];
+    const pairs = q.o.map((t,i)=>({t, ok:correct.includes(i)}));
+    const mixed = q.fixed ? pairs : shuffle(pairs);
+    const marks = mixed.map((p,i)=>p.ok?i:-1).filter(i=>i>=0);
+    return {c:q.c, q:q.q, why:q.why, note:q.note, multi:!!q.multi,
+            o:mixed.map(p=>p.t), a:q.multi ? marks : marks[0]};
+  });
+
+  idx = 0; score = 0; results = [];
+  $('#qtot').textContent = deck.length;
+  buildMeter();
+  show('quiz');
+  render();
+}
+
+function buildMeter(){
+  $('#meter').innerHTML = deck.map(()=>'<div class="seg"></div>').join('');
+}
+function paintMeter(){
+  const segs = $$('#meter .seg');
+  segs.forEach((s,i)=>{
+    s.className = 'seg';
+    if(i < results.length) s.classList.add(results[i].ok ? 'done' : 'miss');
+    else if(i === idx) s.classList.add('here');
+  });
+}
+
+function render(){
+  answered = false;
+  picked = new Set();
+  const q = deck[idx];
+  $('#tag').textContent = q.c;
+  $('#qnum').textContent = idx+1;
+  $('#scoreNow').textContent = score;
+  $('#qtext').textContent = q.q;
+
+  const noteEl = $('#qnote');
+  noteEl.textContent = q.note || '';
+  noteEl.classList.toggle('hidden', !q.note);
+
+  $('#multiHint').classList.toggle('hidden', !q.multi);
+  const chk = $('#check');
+  chk.classList.toggle('hidden', !q.multi);
+  chk.disabled = true;
+
+  $('#verdict').classList.add('hidden');
+  $('#next').classList.add('hidden');
+  $('#next').textContent = (idx === deck.length-1) ? 'See results' : 'Next question';
+
+  const letters = ['A','B','C','D','E','F'];
+  $('#opts').innerHTML = q.o.map((t,i)=>
+    `<button class="opt" data-i="${i}"><span class="key">${letters[i]}</span><span>${esc(t)}</span></button>`
+  ).join('');
+  $$('#opts .opt').forEach(b=>b.addEventListener('click',()=>choose(parseInt(b.dataset.i,10))));
+  paintMeter();
+}
+
+function choose(i){
+  if(answered) return;
+  const q = deck[idx];
+  if(q.multi){
+    if(picked.has(i)) picked.delete(i); else picked.add(i);
+    $$('#opts .opt')[i].classList.toggle('picked', picked.has(i));
+    $('#check').disabled = picked.size === 0;
+    return;
+  }
+  grade([i]);
+}
+
+function grade(chosen){
+  if(answered) return;
+  answered = true;
+  const q = deck[idx];
+  const correct = q.multi ? q.a : [q.a];
+  const ok = chosen.length === correct.length && chosen.every(c=>correct.includes(c));
+  if(ok) score++;
+
+  results.push({
+    q:q.q,
+    chosen: chosen.length ? chosen.slice().sort().map(c=>q.o[c]).join('  /  ') : 'Nothing selected',
+    right: correct.slice().sort().map(c=>q.o[c]).join('  /  '),
+    why:q.why, ok
+  });
+
+  $$('#opts .opt').forEach((b,bi)=>{
+    b.disabled = true;
+    b.classList.remove('picked');
+    if(correct.includes(bi)) b.classList.add('right');
+    else if(chosen.includes(bi)) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
+  const v = $('#verdict');
+  v.className = 'verdict ' + (ok ? 'ok' : 'no');
+  $('#vhead').textContent = ok ? 'Correct' : 'Not quite';
+  $('#vwhy').textContent = q.why || ('Correct answer: ' + correct.map(c=>q.o[c]).join('  /  '));
+  $('#check').classList.add('hidden');
+  $('#multiHint').classList.add('hidden');
+  $('#scoreNow').textContent = score;
+  $('#next').classList.remove('hidden');
+  $('#next').focus();
+  paintMeter();
+}
+
+function advance(){
+  if(!answered) return;
+  if(idx === deck.length-1){ finish(); return; }
+  idx++;
+  render();
+}
+
+function finish(){
+  const total = results.length || 1;
+  const pct = Math.round(score/total*100);
+  $('#pct').textContent = pct + '%';
+  $('#ofline').textContent = score + ' of ' + results.length + ' correct';
+  const missed = results.filter(r=>!r.ok);
+  $('#retryMissed').disabled = missed.length === 0;
+  $('#review').innerHTML = missed.length
+    ? '<h3 class="cond" style="font-size:1.3rem;margin:0 0 12px">Review these ' + missed.length + '</h3>' +
+      missed.map(r=>
+        `<div class="miss">
+           <div class="qq">${esc(r.q)}</div>
+           <div class="line bad">You picked: <b>${esc(r.chosen)}</b></div>
+           <div class="line">Correct: <b>${esc(r.right)}</b></div>
+           ${r.why ? `<div class="line" style="margin-top:6px">${esc(r.why)}</div>` : ''}
+         </div>`).join('')
+    : '<p class="note">Nothing missed. Run a longer set or switch topics to keep drilling.</p>';
+  show('results');
+}
+
+/* =========================================================
+   IMPORT
+   ========================================================= */
+function parseCards(text){
+  const cards = [];
+  text.split(/\r?\n/).forEach(line=>{
+    line = line.trim();
+    if(!line) return;
+    let parts = null;
+    if(line.includes('\t')) parts = line.split('\t');
+    else if(line.includes('|')) parts = line.split('|');
+    else if(/\s+[-–—]\s+/.test(line)) parts = line.split(/\s+[-–—]\s+/);
+    else if(line.includes('::')) parts = line.split('::');
+    if(!parts || parts.length < 2) return;
+    const q = parts[0].trim();
+    const a = parts.slice(1).join(' ').trim();
+    if(q && a) cards.push({q,a});
+  });
+  return cards;
+}
+
+function cardsToQuestions(cards){
+  const answers = [...new Set(cards.map(c=>c.a))];
+  return cards.map(card=>{
+    const others = shuffle(answers.filter(a=>a !== card.a)).slice(0,3);
+    const opts = shuffle([card.a, ...others]);
+    return {c:'My flashcards', q:card.q, o:opts, a:opts.indexOf(card.a), why:'Correct answer: ' + card.a};
+  });
+}
+
+function loadCustom(cards, announce){
+  custom = cards;
+  pool = cardsToQuestions(cards).concat(BANK);
+  buildCats();
+  // default to only the imported set
+  $$('.cat').forEach(c=>{ c.checked = (c.value === 'My flashcards'); });
+  updateCount();
+  if(announce){
+    $('#importMsg').className = 'msg ok';
+    $('#importMsg').textContent = cards.length + ' cards loaded. Your topic is selected on the start screen.';
+    const url = location.origin + location.pathname + '#d=' + encodeDeck(cards);
+    $('#shareUrl').value = url;
+    $('#sharePanel').classList.remove('hidden');
+    $('#shareMsg').textContent = url.length > 7000
+      ? 'This link is very long and some messaging apps may cut it. If it breaks, split your deck in half and share two links.'
+      : '';
+  }
+}
+
+/* =========================================================
+   WIRING
+   ========================================================= */
+buildCats();
+const fromLink = decodeHash();
+if(fromLink) loadCustom(fromLink, false);
+
+$('#go').addEventListener('click', ()=>startQuiz(null));
+$('#next').addEventListener('click', advance);
+$('#quit').addEventListener('click', ()=>{ if(results.length) finish(); else show('start'); });
+$('#again').addEventListener('click', ()=>show('start'));
+$('#toImport').addEventListener('click', ()=>{ $('#importMsg').textContent=''; show('import'); });
+$('#backHome').addEventListener('click', ()=>show('start'));
+
+$('#retryMissed').addEventListener('click', ()=>{
+  const missedQs = results.filter(r=>!r.ok).map(r=>{
+    const found = pool.find(p=>p.q === r.q);
+    return found;
+  }).filter(Boolean);
+  if(missedQs.length) startQuiz(shuffle(missedQs));
+});
+
+$('#loadCards').addEventListener('click', ()=>{
+  const cards = parseCards($('#paste').value);
+  const msg = $('#importMsg');
+  if(cards.length < 4){
+    msg.className = 'msg err';
+    msg.textContent = cards.length === 0
+      ? 'No cards found. Each line needs a question and an answer separated by a tab, a | , or a hyphen with spaces around it.'
+      : 'Only ' + cards.length + ' cards found. You need at least 4 so there are enough wrong answers to choose from.';
+    $('#sharePanel').classList.add('hidden');
+    return;
+  }
+  loadCustom(cards, true);
+});
+
+$('#copyLink').addEventListener('click', async ()=>{
+  const url = $('#shareUrl').value;
+  try{
+    await navigator.clipboard.writeText(url);
+    $('#shareMsg').className = 'msg ok';
+    $('#shareMsg').textContent = 'Link copied.';
+  }catch(e){
+    $('#shareUrl').select();
+    $('#shareMsg').className = 'msg';
+    $('#shareMsg').textContent = 'Copying is blocked here. The link is selected — copy it manually.';
+  }
+});
+
+$('#check').addEventListener('click', ()=>{
+  if(picked.size) grade([...picked]);
+});
+
+document.addEventListener('keydown', e=>{
+  if(!$('#quiz').classList.contains('on')) return;
+  if(e.key === 'Enter'){
+    if(answered){ e.preventDefault(); advance(); return; }
+    if(deck[idx] && deck[idx].multi && picked.size){ e.preventDefault(); grade([...picked]); return; }
+    return;
+  }
+  const n = parseInt(e.key,10);
+  if(n >= 1 && n <= 6 && !answered){
+    const b = $$('#opts .opt')[n-1];
+    if(b) b.click();
+  }
+});
+</script>
+</body>
+</html>
